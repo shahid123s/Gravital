@@ -40,6 +40,14 @@ const userSchema = new mongoose.Schema({
         type: String,
         default: '',
     },
+    isBan : {
+        type : Boolean,
+        default :false
+    },
+    isBlock : {
+        type : Boolean,
+        default :false
+    },
 
 
     followers: [{
@@ -111,7 +119,7 @@ const userSchema = new mongoose.Schema({
         ref: 'Payment'
     }]
 
-})
+}, {timestamps : true});
 
 
 module.exports = mongoose.model('User', userSchema);

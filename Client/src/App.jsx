@@ -3,9 +3,11 @@ import './App.css'
 import { BrowserRouter as Router, Routes, Route , Navigate} from 'react-router-dom'
 import Register from './Pages/User/Register'
 import Sidebar from './Components/User/Sidebar'
+import 'react-toastify/dist/ReactToastify.css';
 import Home from './Pages/User/Home'
 import Login from './Pages/User/Login'
 import AdminLogin from './Pages/Admin/AdminLogin'
+import { ToastContainer } from 'react-toastify'
 
 function App() {
   const [count, setCount] = useState(0)
