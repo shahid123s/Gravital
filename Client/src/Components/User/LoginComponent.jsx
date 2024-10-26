@@ -74,7 +74,7 @@ function LoginComponent({isAdmin}) {
         </form>
         {!isAdmin && <div className="flex flex-col justify-center items-center gap-1">
         <Link className='text-[#99775C] cursor-pointer hover:underline'>Forget Password ?</Link>
-        <Link className='text-[#99775C] cursor-pointer hover:underline'>Create a new Account ?</Link>
+        <Link className='text-[#99775C] cursor-pointer hover:underline' to={'/register'}>Create a new Account ?</Link>
 
         </div>}
     </div>

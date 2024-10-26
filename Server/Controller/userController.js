@@ -2,6 +2,16 @@ const User = require('../Model/userModel');
 const {hashPassword, comparePassword} = require ('../Config/bcrypt');
 const jwt = require('jsonwebtoken');
 const {v4 : uuidv4} = require('uuid')
+const  { createClient } = require('redis');
+
+//redis configuration 
+const client = createClient({
+    password: process.env.REDIS_PASSWORD,
+    socket: {
+        host: process.env.REDIS_HOST,
+        port: process.env.REDIS_PORT
+    }
+});
 
 
 const register = async (req, res) => { 
@@ -25,15 +35,7 @@ const register = async (req, res) => {
 
        const hasedPassword = await hashPassword(password);
        
-       user = new User({
-          userID : uuidv4(),
-          username,
-          email,
-          password : hasedPassword,
-          fullName,           
-         })
-         
-       await user.save();
+      
        
        res
        .status(200)
