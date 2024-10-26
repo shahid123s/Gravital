@@ -33,14 +33,14 @@ function RegisterComponent() {
       console.log(validatedError)
       if (Object.keys(validateError).length === 0) {
         const response = await axiosInstance.post('/user/api/register', userData)
-        console.log(response);
-        toast.success('Registered Successfully',{
+        console.log(response.data.message);
+        toast.success(response.data.message,{
           position: 'top-left',
           closeOnClick: true,
           draggable: false,
           style : {backgroundColor : 'transparent'}
         })
-        navigate('/login')
+        navigate('/otp-verification')
       }
       if(Object.keys(validateError).length == 4){
         setError('Please Enter the details properly')

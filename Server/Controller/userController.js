@@ -1,21 +1,15 @@
 const User = require('../Model/userModel');
 const {hashPassword, comparePassword} = require ('../Config/bcrypt');
+const {getData, storeData, storeOtp, getOtp} = require('../Config/redis')
 const jwt = require('jsonwebtoken');
-const {v4 : uuidv4} = require('uuid')
-const  { createClient } = require('redis');
+const genrateOtp = require('../Config/generateOtp')
+const sendotp = require('../Config/sendOTP')
+const {v4 : uuidv4} = require('uuid');
 
-//redis configuration 
-const client = createClient({
-    password: process.env.REDIS_PASSWORD,
-    socket: {
-        host: process.env.REDIS_HOST,
-        port: process.env.REDIS_PORT
-    }
-});
 
 
 const register = async (req, res) => { 
-     const  {username, email, password, fullName} = req.body;
+     const  {username, email, password, } = req.body;
      try {
         let user = await User.findOne({email});
 
@@ -35,11 +29,22 @@ const register = async (req, res) => {
 
        const hasedPassword = await hashPassword(password);
        
-      
-       
+       user = {
+        userID : uuidv4(),
+        username,
+        email,
+        password: hasedPassword,
+       }
+       storeData(email, user, 600);
+       const otp = genrateOtp(7);
+       storeOtp (email,JSON.stringify(otp));
+       sendotp(email, otp)
+     
+  
        res
        .status(200)
-       .json({message: 'User registration done successfully'})
+       .json({message: 'OTP send Successfully'})
+
 
 
      } catch (error) {
