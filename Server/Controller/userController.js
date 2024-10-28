@@ -169,10 +169,16 @@ const refreshAccessToken = async (req, res) => {
   }
 }
 
+const logout = async (req, res) => {
+  res.clearCookie('refreshToken');
+  res.json({message : 'User Logout Successfully'})
+}
+
 module.exports = {
   sendotp,
   otpVerification,
   register,
   login,
   refreshAccessToken,
+  logout,
 }

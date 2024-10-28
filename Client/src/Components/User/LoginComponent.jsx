@@ -1,7 +1,9 @@
 import { useEffect, useState } from "react"
 import { Link, useNavigate } from "react-router-dom"
 import axiosInstance from "../../utilities/axios"
-import { toast } from "react-toastify"
+import { toast } from "react-toastify";
+import { useDispatch, useSelector } from "react-redux";
+import { login } from "../../app/feature/userSlice";
 
 function LoginComponent({isAdmin}) {
     const [tilte, setTilte] = useState('LOGIN') 
@@ -10,13 +12,25 @@ function LoginComponent({isAdmin}) {
         password: ''
     });
     const navigate = useNavigate()
+    const dispatch = useDispatch();
+
+    const {isAuthenticate, error, loading} = useSelector((state) => state.userAuth)
 
 
     useEffect(()=> {
         if(isAdmin){
             setTilte('ADMIN LOGIN')
         }
-    } ,[])
+    } ,[]);
+
+    useEffect(() => {
+        if(isAuthenticate){
+            navigate('/home');
+        }
+        if(error){
+            toast.error(error);
+        }
+    }, [navigate, isAuthenticate, error])
 
     const handleChange = (event) => {
         const {value, name} = event.target;
@@ -29,10 +43,13 @@ function LoginComponent({isAdmin}) {
         if(isAdmin){
             console.log(formData, 'Admin')
         }else{
-             const response = await axiosInstance.post('/user/api/login', formData);
-             console.log(response)
-             toast.success(response.data.message);
-             navigate('/home')
+            dispatch(login(formData))
+            .unwrap()
+            .then((res) => {
+                console.log(res);
+                toast.success("Login Successfully")
+                
+            })
         }
        } catch (error) {
         toast.warning(error.response.data.message)
