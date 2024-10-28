@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true,
     },
+
     role: {
         type: String,
         enum: ['user', 'admin'],
@@ -44,6 +45,11 @@ const userSchema = new mongoose.Schema({
         type : Boolean,
         default :false
     },
+    
+    refreshToken : {
+        type: String,
+    },  
+
     isBlock : {
         type : Boolean,
         default :false
@@ -117,7 +123,7 @@ const userSchema = new mongoose.Schema({
     paymentHistory: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Payment'
-    }]
+    }],
 
 }, {timestamps : true});
 

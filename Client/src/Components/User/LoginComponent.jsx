@@ -1,12 +1,15 @@
 import { useEffect, useState } from "react"
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import axiosInstance from "../../utilities/axios"
+import { toast } from "react-toastify"
 
 function LoginComponent({isAdmin}) {
     const [tilte, setTilte] = useState('LOGIN') 
     const [formData, setFormData] = useState({
         email: '',
         password: ''
-    })
+    });
+    const navigate = useNavigate()
 
 
     useEffect(()=> {
@@ -20,14 +23,20 @@ function LoginComponent({isAdmin}) {
         setFormData({...formData, [name] : value})
     };
 
-    const handleSubmit = (event) => {
+    const handleSubmit = async (event) => {
         event.preventDefault();
+       try {
         if(isAdmin){
             console.log(formData, 'Admin')
         }else{
-
-            console.log(formData);
+             const response = await axiosInstance.post('/user/api/login', formData);
+             console.log(response)
+             toast.success(response.data.message);
+             navigate('/home')
         }
+       } catch (error) {
+        toast.warning(error.response.data.message)
+       }
     }
 
 

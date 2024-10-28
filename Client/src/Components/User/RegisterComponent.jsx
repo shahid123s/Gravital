@@ -27,12 +27,11 @@ function RegisterComponent() {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
-      console.log(userData)
       const validateError = validate(userData);
       setValidatedError(validateError)
       console.log(validatedError)
       if (Object.keys(validateError).length === 0) {
-        const response = await axiosInstance.post('/user/api/register', userData)
+        const response = await axiosInstance.post('/user/api/send-otp', userData)
         console.log(response.data.message);
         toast.success(response.data.message,{
           position: 'top-left',
@@ -40,7 +39,8 @@ function RegisterComponent() {
           draggable: false,
           style : {backgroundColor : 'transparent'}
         })
-        navigate('/otp-verification')
+        const expireTime = Date.now() + 2 * 60 * 1000 ;
+        navigate('/otp-verification' ,{state :{expireTime, email : userData.email}})
       }
       if(Object.keys(validateError).length == 4){
         setError('Please Enter the details properly')
@@ -78,27 +78,13 @@ function RegisterComponent() {
           />
         </div>
 
-        <div className='flex flex-col gap-1 w-full'>
-          <label htmlFor="fullName"
-            className='text-[#99775C] font-medium text-lg'
-            >Full Name</label>
-            {validatedError?.fullName && <p className='text-red-600 font-light text-sm'  >{validatedError?.fullName}</p>}
-          <input
-            type="text"
-            name="fullName"
-            id="fullName"
-            placeholder='Value'
-            required
-            onChange={handleChange}
-            className='w-76 rounded-md px-3 py-2  border-1 border-black'
-          />
-        </div>
-        {validatedError?.email && <p className='text-red-600 font-light text-sm'  >{validatedError?.email}</p>}
+        
 
         <div className='flex flex-col gap-1 w'>
           <label htmlFor="username"
             className='text-[#99775C] font-medium text-lg'
-          >Email</label>
+            >Email</label>
+            {validatedError?.email && <p className='text-red-600 font-light text-sm'  >{validatedError?.email}</p>}
           <input
             type="text"
             name="email"
@@ -110,12 +96,12 @@ function RegisterComponent() {
 
           />
         </div>
-        {validatedError?.password && <p className='text-red-600 font-light text-sm'  >{validatedError?.password}</p>}
 
         <div className='flex flex-col gap-1 w'>
           <label htmlFor="username"
             className='text-[#99775C] font-medium text-lg'
-          >Password</label>
+            >Password</label>
+            {validatedError?.password && <p className='text-red-600 font-light text-sm'  >{validatedError?.password}</p>}
           <input
             type="text"
             name="password"
