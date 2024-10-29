@@ -7,6 +7,7 @@ import OTPVerification from './Pages/User/OTPVerification'
 import LoadingSpinner from './Components/LoadingSpinner'
 import AdminLogin from './Pages/Admin/AdminLogin'
 import AdminHome from './Pages/Admin/AdminHome'
+import AdminUsersList from './Pages/Admin/AdminUsersList'
 
 const Register = lazy(() => import ('./Pages/User/Register'));
 const PersonalInformtion = lazy(() => import ('./Pages/User/PersonalInformtion'));
@@ -33,7 +34,9 @@ function App() {
          <Route path='/admin'>
          <Route index element= {<AdminLogin/>}  replace />
          <Route path='login' element={<AdminLogin/>} />
-         <Route path='home' element={<AdminHome/>}/> 
+         <Route path='home'element={<Navigate to={'/admin/dashboard'} replace /> } />
+         <Route path='dashboard' element={<AdminHome/>}/> 
+         <Route path='users' element={<AdminUsersList/>} />
          </Route>
         </Routes>
       </Router>

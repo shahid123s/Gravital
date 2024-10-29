@@ -2,7 +2,7 @@ import React, { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 import axiosInstance from '../../utilities/axios'
 
-function AdminContent() {
+function AdminContent({childern, name}) {
   const {isAdmin, accessToken} = useSelector(state => state.adminAuth)
   
   useEffect(() => {
@@ -19,8 +19,12 @@ function AdminContent() {
 
   return (  
 
-    <div className=' flex-1 flex flex-col items-center'>
-      <button onClick={handleClick}> okay</button>
+    <div className=' flex-1 flex flex-col pl-56 bg-[#757575] min-h-screen'>
+      {/* <button onClick={handleClick}> okay</button> */}
+      <h1 className='bg-inherit text-4xl pl-4 pt-2 text-white font-poppins'>{name}</h1>
+      {childern}
+      <br />
+      <hr/>
     </div>
 
 )

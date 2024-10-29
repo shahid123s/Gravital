@@ -4,6 +4,9 @@
 
 
 *{
-    background-color: #f9f9f9;
+    background-color: inherit;
 }
 
+div{
+    background-color: #f9f9f9;
+}
