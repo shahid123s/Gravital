@@ -1,13 +1,12 @@
 import { useState , lazy, Suspense} from 'react'
 import './App.css'
 import { BrowserRouter as Router, Routes, Route , Navigate} from 'react-router-dom'
-// import Register from './Pages/User/Register'
-import Sidebar from './Components/User/Sidebar'
 import Home from './Pages/User/Home'
 import Login from './Pages/User/Login'
 import OTPVerification from './Pages/User/OTPVerification'
-// import PersonalInformtion from './Pages/User/PersonalInformtion'
 import LoadingSpinner from './Components/LoadingSpinner'
+import AdminLogin from './Pages/Admin/AdminLogin'
+import AdminHome from './Pages/Admin/AdminHome'
 
 const Register = lazy(() => import ('./Pages/User/Register'));
 const PersonalInformtion = lazy(() => import ('./Pages/User/PersonalInformtion'));
@@ -30,6 +29,11 @@ function App() {
          <Route path='login' element= {<Login/>} />
          <Route path='home' element= {<Home/>} />
 
+         </Route>
+         <Route path='/admin'>
+         <Route index element= {<AdminLogin/>}  replace />
+         <Route path='login' element={<AdminLogin/>} />
+         <Route path='home' element={<AdminHome/>}/> 
          </Route>
         </Routes>
       </Router>

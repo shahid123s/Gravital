@@ -50,6 +50,12 @@ const userSchema = new mongoose.Schema({
         type: String,
     },  
 
+    dob: {
+        type: Date,
+        required: true,
+    },
+
+
     isBlock : {
         type : Boolean,
         default :false

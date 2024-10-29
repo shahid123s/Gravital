@@ -14,6 +14,19 @@ export const login = createAsyncThunk(
     }
 )
 
+export const refreshAccessToken = createAsyncThunk(
+    'user/refreshAccessToken',
+    async(_, {rejectWithValue}) => {
+        try {
+            const response = await axiosInstance.post('/user/api/refresh-token');
+            const {accessToken} = response.data;
+            return accessToken;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message )
+        }
+    }
+)
+
 export const logout = createAsyncThunk(
     'user/logout',
     async (_, {rejectWithValue}) => {
@@ -32,12 +45,7 @@ const initialState = {
 const userSlice = createSlice({
     name: 'userAuth',
     initialState,
-    reducers : {
-        logout: (state) => {
-            state.accessToken = null;
-            state.isAuthenticate = false;
-        },
-    },
+    reducers : {},
     extraReducers : (builder) => {
         builder
         .addCase(login.pending, (state) => {
@@ -46,7 +54,7 @@ const userSlice = createSlice({
         })
         .addCase(login.fulfilled, (state, action) => {
             state.loading  = false;
-            state.accessToken = action.payload.accessToken;
+            state.accessToken = action.payload;
             state.isAuthenticate = true
         })
         .addCase(login.rejected, (state, action) => {
@@ -63,6 +71,21 @@ const userSlice = createSlice({
         .addCase(logout.fulfilled, (state, actiion) => {
             state.isAuthenticate = false;
             state.accessToken = null;
+        
+        })
+        .addCase(logout.rejected, (state, action) => {
+            state.loading = false;
+            state.error = action.payload;
+        })
+
+        // refreshAccessToken
+        .addCase(refreshAccessToken.fulfilled, (state, action) => {
+            state.accessToken = action.payload;
+            state.error = null;
+            state.loading  = false;
+        })
+        .addCase(refreshAccessToken.rejected, (state) => {
+            state.accessToken =  null;
         })
     }
 
@@ -70,4 +93,5 @@ const userSlice = createSlice({
 
 
 
-export default userSlice.reducer;
+
+export default userSlice.reducer

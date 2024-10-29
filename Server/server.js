@@ -5,7 +5,8 @@ const dotenv = require('dotenv');
 dotenv.config();
 const {client} = require('./Config/redis')
 const connectMongo = require ('./Config/mongo');
-const userRoute = require('./Routes/userRoutes');
+const userRoute = require('./Routes/User/userRoutes');
+const adminRoute = require('./Routes/Admin/adminRoutes')
 
 const app = express();
 
@@ -28,7 +29,7 @@ app.use(cors({
 }))
 
 app.use('/user/api', userRoute)
-
+app.use('/admin/api', adminRoute);
 const port = process.env.PORT 
 
 client.connect();
