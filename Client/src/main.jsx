@@ -12,7 +12,7 @@ createRoot(document.getElementById('root')).render(
   <StrictMode>
     <Provider store={store}>
 
-    <ToastContainer/>
+    <ToastContainer />
     <App />
     </Provider>
   </StrictMode>,
