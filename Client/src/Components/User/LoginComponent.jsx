@@ -4,6 +4,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../app/feature/userSlice";
 import { adminLogin } from "../../app/feature/adminSlice";
+import UserModal from "../UserModal";
 
 
 function LoginComponent({ isAdmin }) {

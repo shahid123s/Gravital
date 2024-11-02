@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { useSelector } from 'react-redux'
 import axiosInstance from '../../utilities/axios'
 
-function AdminContent({children, name}) {
+function AdminContent({children, name,}) {
   const {isAdmin, accessToken} = useSelector(state => state.adminAuth)
   const[search, setSearch] = useState('')
   useEffect(() => {
@@ -21,6 +21,11 @@ function AdminContent({children, name}) {
 
   }
 
+  const childrenWithProp = React.Children.map(children, child  => {
+    return React.cloneElement(child, {search})
+  })
+  
+
   return (  
 
     <div className=' flex-1 flex flex-col pl-56 bg-[#757575] min-h-screen'>
@@ -34,7 +39,8 @@ function AdminContent({children, name}) {
      </div>
       <br />
       <hr/>
-      {children}
+      {childrenWithProp}
+      
     </div>
 
 )
