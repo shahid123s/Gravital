@@ -1,6 +1,6 @@
 const {comparePassword} = require('../Config/bcrypt');
 const User = require('../Model/userModel');
-const {generateAccessToken, generateRefreshToken,} = require('../Config/jwt');
+const {generateAccessToken, generateRefreshToken, decodeRefreshToken} = require('../Config/jwt');
 
 
 const adminLogin = async (req, res) => {
@@ -28,8 +28,8 @@ const adminLogin = async (req, res) => {
 
     res.cookie('adminToken', refreshToken, {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite : 'Strict',
+        secure: false,  
+        sameSite: 'Lax',
         maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
@@ -47,22 +47,33 @@ const adminLogin = async (req, res) => {
 const usersList = async(req, res) => {
    try {
 
-    const {search} = req.query;
-    console.log(search, req.query)
+    const {search, page, limit} = req.query;
+    const skip = (page - 1) * limit;
     const searchData = search.trim().replace(/[^a-zA-Z\s]/g, "");
 
-    console.log(searchData)
-    const userList = await User.find({
-        $and: [
-            { fullName: { $regex: new RegExp(`^${searchData}`, "i") } },
-            { role: 'user' }
-        ]
-    } ,'username email fullName phoneNumber isBan isBlock' );
+    const [userList,countList] = await Promise.all([
+        User.find({
+            $and: [
+                { fullName: { $regex: new RegExp(`^${searchData}`, "i") } },
+                { role: 'user' }
+            ]
+        } ,'username email fullName phoneNumber isBan isBlock' ).skip(skip).limit(limit),
+        User.find({
+            $and: [
+                { fullName: { $regex: new RegExp(`^${searchData}`, "i") } },
+                { role: 'user' }
+            ]
+        }  ).countDocuments(),
+    ]);
+
+    const totalPage = Math.ceil(countList / limit) ;
+    console.log(countList, totalPage)
+
     console.log(userList)
-    res.json(userList)
+    res.status(200).json({userList, totalPage, currentPage : page})
    } catch (error) {
     console.log(error);
-    res
+    return res
     .status(504)
     .json({message : error.message})
    }
@@ -79,41 +90,80 @@ const banUser = async (req, res) => {
     await User.findByIdAndUpdate(userId, {$set:{isBan : true}})
 
     console.log(userId);
-    res.json({message  : 'okay'})
+    res.status(200).json({message  : 'User Banned Successfully'})
 }
 
 
 const unBanUser = async (req, res) => {
     const { userId} = req.body;
     await User.findByIdAndUpdate( userId, {$set : {isBan: false}});
-    res.json({message: 'Okay aan monu '})
+    res.status(200).json({message: 'User Unbanned Successfully'})
 }
 
 
 const userData = async(req, res) => { 
     const { userId } = req.query;
-    console.log('enthaanu');
-    
-    const response = await User.findById(userId).select('-password -refreshToken');
-    console.log(response, 'entha');
-    
-    res.json(response)
+    try {
+        const response = await User.findById(userId).select('-password -refreshToken');
+        res.status(200).json(response)
+    } catch (error) {
+        res.status(504).json({message: error.message})
+    }
 }
 
 const blockUser = async (req, res) => {
     const {userId} = req.body;
+   try {
     console.log(userId, req.body)
     await User.findByIdAndUpdate(userId, {$set: {isBlock: true}});
-    res.json({message: 'User Blocked Successfully'});
+    res.status(200).json({message: 'User Blocked Successfully'});
+   } catch (error) {
+    res.status(504).json({message: error.message})
+   }
 }
 
 const unBlockUser = async (req, res) => {
     const {userId} = req.body;
-    console.log(req.body);
+   try {
     await User.findByIdAndUpdate(userId, {$set: {isBlock: false}});
-    res.json({message: 'User Unblocked Successfully'});
+    res.status(200).json({message: 'User Unblocked Successfully'});
+   } catch (error) {
+    res.status(504).json({message: error.message})
+   }
 
 
+}
+
+const refreshAccessToken = async (req, res) => {
+    console.log('oaky anana mur', req.cookies)
+    const {adminToken} = req.cookies;
+
+    if(!adminToken) {
+        return res
+        .status(403)
+        .json({message: 'Token Expired'});
+    }
+    
+    try {
+        const decode = await decodeRefreshToken(adminToken);
+        const user = await User.findById(decode.userId);
+    
+        if(!user || user.refreshToken != adminToken) {
+             return res.status(403).json({message: 'Invalid or Expire Token '});
+        }
+        const accessToken =  await generateAccessToken(user._id, user.role);
+        res.status(200).json({accessToken})
+        
+    } catch (error) {       
+        res.status(403).json({message: "Token expired or Invalid Token"});
+    }
+
+}
+
+
+const adminLogout = async (req, res) => {
+    res.clearCookie('adminToken');
+    res.status(200).json({ message: 'User Logout Successfully' })
 }
 
 module.exports = {
@@ -123,5 +173,7 @@ module.exports = {
     unBanUser,
     userData,
     blockUser,
-    unBlockUser
+    unBlockUser,
+    refreshAccessToken,
+    adminLogout,
 }

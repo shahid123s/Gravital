@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import validate from '../../utilities/validate';
-import axiosInstance from '../../utilities/axios';
+import {axiosInstance} from '../../utilities/axios';
 import { toast } from 'react-toastify';
 function PersonalInfoComponet() {
     const location = useLocation()
@@ -12,8 +12,15 @@ function PersonalInfoComponet() {
         fullName :'',
         dob : '',
         phoneNumber : '',
-        email : location.state.email
+        email : location.state?.data?.email
     })
+
+    useEffect(() => {
+      console.log(location)
+      if(location.state?.from != 'otp'){
+        navigate('/login')
+      }
+    },[])
 
     const handleChange = (event) => {
         const {value, name} = event.target;
@@ -27,7 +34,7 @@ function PersonalInfoComponet() {
         setValidatedError(validateError)
         if(Object.keys(validateError).length === 0){
             console.log('okay aanu mone');
-            const response = await axiosInstance.post('/user/api/register', userData);
+            const response = await axiosInstance.post('/register', userData);
             toast.success(response?.data?.message);
             navigate('/login')
         }

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Link, useNavigate } from 'react-router-dom';
-import axiosInstance from '../../utilities/axios';
+import {axiosInstance} from '../../utilities/axios';
 import validate from '../../utilities/validate';
 import {toast} from 'react-toastify'
 
@@ -12,7 +12,6 @@ function RegisterComponent() {
     email: '',
     password: '',
     confirmPassword: '',
-    fullName: '',
   });
   const navigate = useNavigate();
 
@@ -27,11 +26,15 @@ function RegisterComponent() {
   const handleSubmit = async (event) => {
     try {
       event.preventDefault();
+      if(userData.confirmPassword != userData.password){
+        return setError('Password and Confirm Password is not match')
+      }
+      setError(null)
       const validateError = validate(userData);
       setValidatedError(validateError)
       console.log(validatedError)
       if (Object.keys(validateError).length === 0) {
-        const response = await axiosInstance.post('/user/api/send-otp', userData)
+        const response = await axiosInstance.post('/send-otp', userData)
         console.log(response.data.message);
         toast.success(response.data.message,{
           position: 'top-left',
@@ -40,7 +43,7 @@ function RegisterComponent() {
           style : {backgroundColor : 'transparent'}
         })
         const expireTime = Date.now() + 2 * 60 * 1000 ;
-        navigate('/otp-verification' ,{state :{expireTime, email : userData.email}})
+        navigate('/otp-verification' ,{state :{expireTime, email : userData.email, from: 'register'}})
       }
       if(Object.keys(validateError).length == 4){
         setError('Please Enter the details properly')
@@ -66,7 +69,7 @@ function RegisterComponent() {
           <label htmlFor="username"
             className='text-[#99775C] font-medium text-lg'
           >Username</label>
-            {validatedError?.userName && <p className='text-red-600 font-light text-sm'  >{validatedError?.userName}</p>}
+            {validatedError?.username && <p className='text-red-600 font-light text-sm'  >{validatedError?.username}</p>}
           <input
             type="text"
             name="username"

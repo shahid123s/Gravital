@@ -9,6 +9,8 @@ userRoute.post('/otp-verification', userController.otpVerification);
 userRoute.post('/register', userController.register);
 userRoute.post('/login', userController.login);
 userRoute.post('/logout', userController.logout)
+userRoute.post('/reset-password/email', userController.resetPasswordEmail);
+userRoute.post('/reset-password', userController.resetPassword);
 
 userRoute.post('/refresh-token', userController.refreshAccessToken)
 

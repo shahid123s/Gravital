@@ -1,8 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import userLogo from '../assets/image.png'
-import { toast } from 'react-toastify';
-import axios from 'axios';
-import axiosInstance from '../utilities/axios';
 
 function UserModal({isOpen, onClose, userData }) {
 
@@ -36,6 +33,8 @@ function UserModal({isOpen, onClose, userData }) {
             <h1 className='text-[#99775C]'>Created At : <span className='text-[#333333]'>{convertDate(userData?.createdAt)}</span> </h1>
             <h1 className='text-[#99775C]'>Updated At : <span className='text-[#333333]'>{convertDate(userData?.updatedAt)}</span>  </h1>
             <h1 className='text-[#99775C]'>Date Of Birth : <span className='text-[#333333]'>{convertDate(userData?.dob)}</span> </h1>
+            <h1 className='text-[#99775C]'>Is Blocked : <span className='text-[#333333]'>{userData?.isBlock ? "True" : 'False'}</span> </h1>
+            <h1 className='text-[#99775C]'>Is Banned : <span className='text-[#333333]'>{userData?.isBan ? "True" : 'False'}</span> </h1>
         </div>
       </div>
     </div>

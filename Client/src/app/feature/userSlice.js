@@ -1,11 +1,11 @@
 import {createSlice, createAsyncThunk} from '@reduxjs/toolkit';
-import axiosInstance from '../../utilities/axios';
+import {axiosInstance} from '../../utilities/axios';
 
 export const login = createAsyncThunk(
     'user/login',
     async (credentials, {rejectWithValue}) => {
         try {
-            const response = await axiosInstance.post('user/api/login', credentials);
+            const response = await axiosInstance.post('/login', credentials);
             const {accessToken} = response.data;
             return accessToken;
         } catch (error) {
@@ -18,7 +18,7 @@ export const refreshAccessToken = createAsyncThunk(
     'user/refreshAccessToken',
     async(_, {rejectWithValue}) => {
         try {
-            const response = await axiosInstance.post('/user/api/refresh-token');
+            const response = await axiosInstance.post('/refresh-token');
             const {accessToken} = response.data;
             return accessToken;
         } catch (error) {
@@ -30,14 +30,18 @@ export const refreshAccessToken = createAsyncThunk(
 export const logout = createAsyncThunk(
     'user/logout',
     async (_, {rejectWithValue}) => {
-        const response = await axiosInstance.post('user/api/logout');
+       try {
+        const response = await axiosInstance.post('/logout');
         return response.data
+       } catch (error) {
+        return rejectWithValue(error.response?.data?.message);
+       }
     }
 )
 
 const initialState = {
     accessToken : null ,
-    isAuthenticate : false,
+    isAuthenticate : false || localStorage.getItem('isAuthenticate'),
     loading : false,
     error : null,
 }
@@ -55,7 +59,8 @@ const userSlice = createSlice({
         .addCase(login.fulfilled, (state, action) => {
             state.loading  = false;
             state.accessToken = action.payload;
-            state.isAuthenticate = true
+            state.isAuthenticate = true;
+            localStorage.setItem('isAuthenticate', true);
         })
         .addCase(login.rejected, (state, action) => {
             state.loading = false;
@@ -71,6 +76,7 @@ const userSlice = createSlice({
         .addCase(logout.fulfilled, (state, actiion) => {
             state.isAuthenticate = false;
             state.accessToken = null;
+            localStorage.removeItem('isAuthenticate')
         
         })
         .addCase(logout.rejected, (state, action) => {

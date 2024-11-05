@@ -142,10 +142,10 @@ const login = async (req, res) => {
 
 
 const refreshAccessToken = async (req, res) => {
-  const { refreshToken } = req.cookies;
+  const { refreshToken} = req.cookies;
   if (!refreshToken) {
     return res
-      .status(401)
+      .status(403)
       .json({ message: 'Token Required' });
   }
   try {
@@ -157,7 +157,7 @@ const refreshAccessToken = async (req, res) => {
     }
 
     //
-    const accessToken = await generateAccessToken(user._id);
+    const accessToken = await generateAccessToken(user._id, user.role);
 
     res.json({ accessToken });
 
@@ -166,8 +166,44 @@ const refreshAccessToken = async (req, res) => {
   }
 }
 
+const resetPasswordEmail = async (req, res) => {
+    const {email} = req.body ;
+    console.log(email, req.body)
+    try {
+      const user = await User.findOne({email});
+      console.log('ivda ana')
+      if(!user) {
+        return res.status(404).json({message: 'Invalid Email'})
+      }
+      const otp = genrateOtp(7);
+      storeOtp(email, JSON.stringify(otp));
+      sendOtpToEmail(email, otp);
+      res.status(200).json({message: 'OTP Send Successfully'});
+    } catch (error) {
+      return res.status(504).json({message: error.message});
+    }
+}
+
+const resetPassword = async (req, res) => { 
+  const {password, email} = req.body;
+  try {
+    const user = await User.findOne({email})
+    const securedPassword = await hashPassword(password);
+    user.password = securedPassword;
+    await user.save();
+    
+    res.status(200).json({message: 'Password Changed Succssfully'})
+
+  } catch (error) {
+    return res.status(504).json({message : error.message})
+  }
+
+
+}
+
 const logout = async (req, res) => {
   res.clearCookie('refreshToken');
+  console.log(req.cookies, res.cookies)
   res.json({ message: 'User Logout Successfully' })
 
 }
@@ -184,4 +220,6 @@ module.exports = {
   refreshAccessToken,
   logout,
   post,
+  resetPassword,
+  resetPasswordEmail,
 }

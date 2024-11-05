@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, Navigate, useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import axiosInstance from "../../utilities/axios";
+import {axiosInstance} from "../../utilities/axios";
 import { toast } from "react-toastify";
+import Spinner from '../LoadingSpinner'
 
 function Otpverfication() {
     const [timeLeft, setTimeLeft] = useState(0);
@@ -15,7 +16,13 @@ function Otpverfication() {
     // expireTime :                 
     });
     const expireTime = location.state?.expireTime 
-    
+    useEffect(()=> {
+        console.log(location)
+        if(!location.state?.from){
+            navigate('/login')
+        }
+    },[])
+
     useEffect(() => {
         const interval = setInterval(() => {
             const remaining = Math.max(0, expireTime - Date.now());
@@ -42,8 +49,15 @@ function Otpverfication() {
     }
     const handleSubmit = async (event) => {
         event.preventDefault();
+
         try {
-            const response = await axiosInstance.post('/user/api/otp-verification',data);
+            let response ;
+          if(!location.state?.isResetPassword){
+            response = await axiosInstance.post('/otp-verification',data);
+          }
+          else{
+            response = await axiosInstance.post('/otp-verification', data)
+          }
             console.log(response.data)
             toast.success(response?.data?.message,{
                 position: 'top-left',
@@ -51,7 +65,11 @@ function Otpverfication() {
                 draggable: false,
                 style : {backgroundColor : 'transparent'}
               } )
-            navigate('/register/personal-info', {state : data})
+              if(location.state?.isResetPassword){
+                navigate('/reset-password', {state: {data, from: 'otp'}})
+              }else{
+                  navigate('/register/personal-info', {state : {data, from: 'otp'}})
+              }
         } catch (error) {
             console.log(error?.response?.data?.message)
             toast.warning(error?.response?.data?.message,{
@@ -105,7 +123,7 @@ function Otpverfication() {
             </form>
             {timeLeft!== 0 &&  <p className='text-red-500'>{formatTimeLeft(timeLeft)}</p>}
             {!timeLeft && <Link className='text-[#99775C] cursor-pointer hover:underline'onClick={handleResend} >Resent OTP</Link>}
-            <Link className='text-[#99775C] cursor-pointer hover:underline'>Change your Email</Link>
+            {!location.state?.isResetPassword&&<Link className='text-[#99775C] cursor-pointer hover:underline' to={'/register'}>Change your Email</Link>}
 
         </div>
     )

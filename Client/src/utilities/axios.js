@@ -2,14 +2,24 @@ import axios from 'axios';
 
 
 
-const axiosInstance = axios.create({
-    baseURL : import.meta.env.VITE_BASE_URL,
+export const axiosInstance = axios.create({
+    baseURL : import.meta.env.VITE_USER_BASE_URL,
     withCredentials: true,
     timeout : 10000,
 
 })
 
 
+export const adminAxiosInstance = axios.create({
+    baseURL : import.meta.env.VITE_ADMIN_BASE_URL,
+    withCredentials: true,
+    timeout : 10000,
+})
 
 
-export default axiosInstance;
+
+
+
+
+
+

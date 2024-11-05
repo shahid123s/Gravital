@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { useDispatch, useSelector } from "react-redux";
 import { login } from "../../app/feature/userSlice";
 import { adminLogin } from "../../app/feature/adminSlice";
-import UserModal from "../UserModal";
+
 
 
 function LoginComponent({ isAdmin }) {
@@ -19,6 +19,7 @@ function LoginComponent({ isAdmin }) {
     const { isAuthenticate, error, loading } = useSelector((state) => state.userAuth)
     const {isAdmin: validateAdmin} = useSelector(state => state.adminAuth)
    
+
     useEffect(() => {
         if (isAdmin) {
             setTilte('ADMIN LOGIN')
@@ -56,7 +57,7 @@ function LoginComponent({ isAdmin }) {
                 dispatch(login(formData))
                     .unwrap()
                     .then((res) => {
-                        console.log(res);
+                        // console.log(res);
                         toast.success("Login Successfully")
 
                     })
@@ -112,7 +113,7 @@ function LoginComponent({ isAdmin }) {
 
             </form>
             {!isAdmin && <div className="flex flex-col justify-center items-center gap-1">
-                <Link className='text-[#99775C] cursor-pointer hover:underline'>Forget Password ?</Link>
+                <Link className='text-[#99775C] cursor-pointer hover:underline' to={'/reset-password/email'}>Forget Password ?</Link>
                 <Link className='text-[#99775C] cursor-pointer hover:underline' to={'/register'}>Create a new Account ?</Link>
 
             </div>}

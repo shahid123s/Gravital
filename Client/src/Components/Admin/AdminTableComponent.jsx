@@ -1,221 +1,153 @@
 import React, { useEffect, useState } from 'react';
-import userLogo from '../../assets/image.png'
+import userLogo from '../../assets/image.png';
 import { toast } from 'react-toastify';
-import axiosInstance from '../../utilities/axios';
+import { adminAxiosInstance } from '../../utilities/axios';
 import Modal from '../Modal';
 import UserModal from '../UserModal';
 import Spinner from '../Spinner';
+import Pagination from '../Pagination';
 
-function AdminTableComponent({search}) {
+function AdminTableComponent({ search }) {
   const [userDetails, setUserDetails] = useState([]);
   const [dropdownOpen, setDropdownOpen] = useState(null);
-  const [currentPage, setCurrentPage] = useState(5);
-  const [totalPages, setTotalPages] = useState(10);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
   const [isOpen, setIsOpen] = useState(false);
-  const  [userData,  setUserData] = useState('')
-  const [isLoading, setIsLoading] = useState(false)
-
-
-  const limit = 10;
-
-
+  const [userData, setUserData] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
+  const limit = 2; 
 
   useEffect(() => {
-  console.log(search)  
-  fetchUsersList()
-  }, [search])
+    fetchUsersList();
+  }, [search, currentPage]);
 
-
-  const calculateStatus  = (userDetails)  => {
-    if(userDetails.isBlock){
-
-      return ({status : 'Blocked'})
-    }
-    else if(userDetails.isBan) {
-      return ({status : 'Banned'})
-    }
-
-      return ({status : 'Good'})
-
-  }
+  const calculateStatus = (user) => {
+    if (user.isBlock) return { status: 'Blocked' };
+    if (user.isBan) return { status: 'Banned' };
+    return { status: 'Good' };
+  };
 
   const fetchUsersList = async () => {
     try {
-      setIsLoading(true)
-      const response = await axiosInstance.get('/admin/api/users-list', {
+      setIsLoading(true);
+      const response = await adminAxiosInstance.get('/users-list', {
         params: { page: currentPage, limit, search }
       });
-
-    
-
-
-      setUserDetails(response.data);
-      setIsLoading(false)
-      setTotalPages(response.data.totalPages)
+      console.lo
+      setUserDetails(response.data.userList);
+      setTotalPages(response.data.totalPage);
+      setIsLoading(false);
     } catch (error) {
-      toast.error(error)
+      toast.error(error.message);
     }
-  }
+  };
 
-
-
-
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
 
   const toggleDropdown = (id) => {
     setDropdownOpen(dropdownOpen === id ? null : id);
   };
 
-
-  const bgColor = (userId) => {
-    if (userId % 2 === 0) {
-      return 'bg-[#333333]  '
-    }
-    return ''
-  }
-
   const handleAction = async (action, userId) => {
-    if( action == 'Ban'){
-      const response = await axiosInstance.patch('/admin/api/ban-user', {userId})
-      toast.success(response.data.message);
+    try {
+      if (action == 'Ban') {
+        const response = await adminAxiosInstance.patch('/ban-user', { userId })
+        toast.success(response.data.message);
+      }
+      else if (action == 'UnBan') {
+        const response = await adminAxiosInstance.patch('/unban-user', { userId })
+        toast.success(response.data.message);
+      }
+      else if (action == 'Block') {
+        const response = await adminAxiosInstance.patch('/block-user', { userId });
+        toast.success(response.data.message);
+      }
+      else if (action == 'Unblock') {
+        const response = await adminAxiosInstance.patch('/unblock-user', { userId });
+        toast.success(response.data.message);
+      }
+      console.log(action, userId);
+      fetchUsersList()
+    } catch (error) {
+      toast.error(error.message);
     }
-    else if( action == 'UnBan'){
-      console.log('oho')
-      const response = await axiosInstance.patch('/admin/api/unban-user', {userId})
-      toast.success(response.data.message);
-    }
-    else if (action == 'Block'){
-      const response = await axiosInstance.patch('/admin/api/block-user', {userId});
-      toast.success(response.data.message);
-    }
-    else if (action == 'Unblock'){
-      const response = await axiosInstance.patch('/admin/api/unblock-user', {userId});
-      toast.success(response.data.message);
-    }
-    console.log(action, userId);
-    fetchUsersList()
-  }
-
-
+  };
 
   const handleUser = async (userId) => {
-    const fetchUserData =async () => {
-      try {
-        const response = await axiosInstance.get('/admin/api/user-data/',{
-          params : {userId}
-        });
-        setUserData(response.data)
-        console.log(response)
-
-      } catch (error) {
-        toast.error(error.message)
-        console.log(error);
-        
-      }
+    try {
+      const response = await adminAxiosInstance.get('/user-data/', { params: { userId } });
+      setUserData(response.data);
+      setIsOpen(true);
+    } catch (error) {
+      toast.error(error.message);
     }
+  };
 
-    fetchUserData(userId)
-    setIsOpen(true);
-
-  }
-
-
-
-  const handleClose = async() => {
+  const handleClose = () => {
     setIsOpen(false);
-  }
-
-
+  };
 
   return (
-    <div className="p-4 bg-inherit" >
+    <div className="p-4 bg-inherit">
       <div className="overflow-x-auto">
-          {isLoading && <Spinner/>}
-        {!isLoading && <table className="min-w-full bg-gray-800 text-gray-300">
-          <thead>
-            <tr className={`bg-gray-700`}>
-              <th className="px-4 py-2 text-left">Sl.No</th>
-              <th className="px-4 py-2 text-left">Profile picture</th>
-              <th className="px-4 py-2 text-left">Name</th>
-              <th className="px-4 py-2 text-left">Email</th>
-              <th className="px-4 py-2 text-left">Status</th>
-              <th className="px-4 py-2 text-left">Action</th>
-            </tr>
-          </thead>
-          <tbody>
-
-            {userDetails.length > 0 ? userDetails?.map((user, index) => (
-              <tr key={user?._id} className={`"border-b border-gray-700 ${bgColor(index)}`}>
-                <td className="px-4 py-2">{index + 1}</td>
-                <td className="px-4 py-2">{user.profilePicture || <img src={userLogo} className='w-14 rounded-xl' />}</td>
-                <td className="px-4 py-2" onClick={() => handleUser(user._id)}>{user.fullName}</td>
-                <td className="px-4 py-2">{user.email}</td>
-                <td className="px-4 py-2">{ calculateStatus(user).status|| 'Alla'}</td>
-                <td className="px-4 py-2">
-                  <button
-                    onClick={() => toggleDropdown(user._id)}
-                    className=" hover:bg-[#4A90E2] text-white px-2 py-1 rounded"
-                    >
-                    View
-                    <span
-                      className="ml-2 text-white px-2 py-1"
-                      >
-                      ▼
-                    </span>
-                  </button>
-
-                  {dropdownOpen === user._id && (
-                    <div className="absolute right-0 mt-2 w-32 bg-gray-700 rounded shadow-lg">
-                      <button className={`block w-full px-4 py-2 text-sm text-left text-gray-300  hover:bg-orange-400 cursor-pointer ${user.isBlock? 'opacity-45 cursor-not-allowed': 'cursor-pointer'}`}
-                        onClick={() => handleAction(!user.isBan?'Ban' : 'UnBan', user._id)}
-                        disabled = {user.isBlock? true : false}
-                        >
-                        {!user.isBan  ?'Ban' : 'UnBan'}
-                      </button>
-                      <button className="block w-full px-4 py-2 text-sm text-left text-gray-300 hover:bg-red-500"
-                        onClick={() => handleAction(!user.isBlock? 'Block': 'Unblock', user._id)}
-                        >
-                          {!user.isBlock? 'Block': 'Unblock'}
-                      </button>
-                      <button className="block w-full px-4 py-2 text-sm text-left text-gray-300  hover:bg-lime-600 hover:text-[#ffff]"
-                        onClick={() => handleAction('Premuim')}
-                        >
-                        Premium
-                      </button>
-                    </div>
-                  )}
-                </td>
-                {isOpen && <UserModal isOpen={isOpen} onClose={handleClose} userData={userData}  />}
+        {isLoading ? <Spinner /> : (
+          <table className="min-w-full bg-gray-800 text-gray-300">
+            <thead>
+              <tr className="bg-gray-700">
+                <th className="px-4 py-2 text-left">Sl.No</th>
+                <th className="px-4 py-2 text-left">Profile Picture</th>
+                <th className="px-4 py-2 text-left">Name</th>
+                <th className="px-4 py-2 text-left">Email</th>
+                <th className="px-4 py-2 text-left">Status</th>
+                <th className="px-4 py-2 text-left">Action</th>
               </tr>
-            )): <td className='text-4xl'>No User Found</td>}
-            
-          </tbody>
-        </table>}
-        <Modal title={'Ban'} />
-        
+            </thead>
+            <tbody>
+              {userDetails.length > 0 ? userDetails.map((user, index) => (
+                <tr key={user._id} className="border-b border-gray-700">
+                  <td className="px-4 py-2">{index + 1}</td>
+                  <td className="px-4 py-2">
+                    {user.profilePicture || <img src={userLogo} className="w-14 rounded-xl" alt="User profile" />}
+                  </td>
+                  <td className="px-4 py-2" onClick={() => handleUser(user._id)}>{user.fullName}</td>
+                  <td className="px-4 py-2">{user.email}</td>
+                  <td className="px-4 py-2">{calculateStatus(user).status}</td>
+                  <td className="px-4 py-2">
+                    <button
+                      onClick={() => toggleDropdown(user._id)}
+                      className="hover:bg-[#4A90E2] text-white px-2 py-1 rounded"
+                    >
+                      View ▼
+                    </button>
+                    {dropdownOpen === user._id && (
+                      <div className="absolute right-0 mt-2 w-32 bg-gray-700 rounded shadow-lg">
+                        <button onClick={() => handleAction(user.isBan ? 'UnBan' : 'Ban', user._id)} disabled={user.isBlock} className="block w-full px-4 py-2 text-sm text-left hover:bg-orange-400">{user.isBan ? 'UnBan' : 'Ban'}</button>
+                        <button onClick={() => handleAction(user.isBlock ? 'Unblock' : 'Block', user._id)} className="block w-full px-4 py-2 text-sm text-left hover:bg-red-500">{user.isBlock ? 'Unblock' : 'Block'}</button>
+                        <button onClick={() => handleAction('Premium')} className="block w-full px-4 py-2 text-sm text-left hover:bg-lime-600">Premium</button>
+                      </div>
+                    )}
+                  </td>
+                  {isOpen && <UserModal isOpen={isOpen} onClose={handleClose} userData={userData} />}
+                </tr>
+              )) : (
+                <tr><td colSpan="6" className="text-center text-4xl">No User Found</td></tr>
+              )}
+            </tbody>
+          </table>
+        )}
+        <Modal title="Ban" />
       </div>
       <div className="flex justify-end mt-2 text-gray-400 bg-inherit">
-      {/* {generatePageNumber().map((page, index) => (
-                    <button
-                        key={index}
-                        onClick={() => typeof page === 'number' && handlePageClick(page)}
-                        disabled={page === currentPage || page === '...'}
-                        className={page === currentPage ? 'active' : ''}
-                    >
-                        {page}
-                    </button>
-                ))} */}
+        <Pagination
+          totalPages={totalPages}
+          currentPage={currentPage}
+          onPageChange={handlePageChange}
+        />
       </div>
     </div>
   );
-
 }
 
-export default AdminTableComponent
-
-
-
-
-
-
-
-
+export default AdminTableComponent;

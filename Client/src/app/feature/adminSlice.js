@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
-import axiosInstance from "../../utilities/axios";
+import {adminAxiosInstance } from "../../utilities/axios";
 
 
 
@@ -7,7 +7,7 @@ export const adminLogin = createAsyncThunk(
     'admin/login',
     async(credentials, {rejectWithValue}) => {
         try {
-            const response = await axiosInstance.post('admin/api/login', credentials);
+            const response = await adminAxiosInstance.post('/login', credentials);
             const {accessToken} = response.data;
             return accessToken;
         } catch (error) {
@@ -17,10 +17,39 @@ export const adminLogin = createAsyncThunk(
 )
 
 
+export const adminLogout = createAsyncThunk(
+    'admin/logout',
+    async (_, {rejectWithValue}) => {
+        try {
+            const response = await adminAxiosInstance.post('/logout');
+            localStorage.removeItem('isAdmin')
+            return response.data;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message);
+        }
+    }
+)
+
+
+export const  refreshAdminToken  = createAsyncThunk(
+    'admin/refreshAccessToken',
+    async(_, {rejectWithValue}) => {
+        try {
+            const response = await adminAxiosInstance.post('/refresh-token');
+            const {accessToken} = response.data;
+            return accessToken;
+        } catch (error) {
+            return rejectWithValue(error.response?.data?.message)
+        }
+    }
+)
+
+
 
 const initialState = {
-    isAdmin : false,
+    isAdmin : false  ||localStorage.getItem('isAdmin'),
     accessToken: null, 
+    error : null
 }
 
 const adminSlice = createSlice({
@@ -31,17 +60,37 @@ const adminSlice = createSlice({
         builder
         .addCase(adminLogin.pending, (state) => {
             state.accessToken = null;
-            state.isAdmin = false;
+            state.isAdmin = true;
+            localStorage.setItem('isAdmin', true)
         })
         .addCase(adminLogin.fulfilled, (state, action) => {
-            state.accessToken = action.payload;
+            state.accessToken = action.payload.accessToken;
             state.isAdmin = true;
+            
         })
         .addCase(adminLogin.rejected, (state, action) => {
             state.accessToken = null;
             state.isAdmin = false;
+            state.error = action.payload;
+            localStorage.setItem('isAdmin', false)
         })
-
+        .addCase(refreshAdminToken.fulfilled, (state, action) => {
+            state.accessToken = action.payload;
+            state.isAdmin = true;
+            localStorage.setItem('isAdmin', true)
+        })
+        .addCase(refreshAdminToken.rejected, (state, action) => {
+            state.accessToken =  null;
+            state.error = action.payload;
+        })
+        .addCase(adminLogout.fulfilled, (state) => {
+            state.accessToken = null;
+            state.isAdmin = null ;
+            localStorage.removeItem('isAdmin');
+        })
+        .addCase(adminLogout.rejected,(state, action) => {
+            state.error = action.payload;
+        })
     }
 })
 
