@@ -71,7 +71,7 @@ function Otpverfication() {
                   navigate('/register/personal-info', {state : {data, from: 'otp'}})
               }
         } catch (error) {
-            console.log(error?.response?.data?.message)
+            console.log(error);
             toast.warning(error?.response?.data?.message,{
                 position: 'top-left',
                 closeOnClick: true,
@@ -109,7 +109,7 @@ function Otpverfication() {
                         className='text-[#99775C] text-md font-light '
                     >Please Enter the OTP send to the email. shah*********s@gmail.com</label>
                     <input
-                        type="text"
+                        type="number"
                         name="otp"
                         id="otp"
                         placeholder='Value'

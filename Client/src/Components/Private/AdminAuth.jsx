@@ -1,12 +1,13 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { Navigate, useNavigate } from "react-router-dom";
 
 
 export const AdminAuth = ({children}) => {
     const {isAdmin} =useSelector(state => state.adminAuth);
-    console.log(isAdmin)
-    const navigate = useNavigate();
-
+    useEffect(() => {
+        console.log(isAdmin)
+    },[])
     if(!isAdmin){
         return (<Navigate to={'/admin/login'} />)
     }

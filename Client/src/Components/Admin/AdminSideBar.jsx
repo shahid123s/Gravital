@@ -34,12 +34,12 @@ function AdminSideBar() {
     <div className='fixed flex flex-col left-0 bg-[#333333] w-56 h-screen items-center pt-10  '>
         <img src={Logo} alt=""  className='bg-transparent w-11/12 mb-7'  />
         <div className='bg-inherit flex-col flex gap-9 items-start'>
-        <SidebarLinks logo = {dashboardLogo} name= {'Dashboard'} ></SidebarLinks>
-        <SidebarLinks logo = {userLogo} name= {'Users'} ></SidebarLinks>
-        <SidebarLinks logo = {postLogo} name= {'Posts'} ></SidebarLinks>
-        <SidebarLinks logo = {commentLogo} name= {'Comments'} ></SidebarLinks>
-        <SidebarLinks logo = {reportLogo} name= {'Reports'} ></SidebarLinks>
-        <SidebarLinks logo = {premiumLogo} name= {'Premium'} ></SidebarLinks>
+        <SidebarLinks logo = {dashboardLogo} name= {'Dashboard'} isAdmin={true} ></SidebarLinks>
+        <SidebarLinks logo = {userLogo} name= {'Users'} isAdmin={true} ></SidebarLinks>
+        <SidebarLinks logo = {postLogo} name= {'Posts'} isAdmin={true} ></SidebarLinks>
+        <SidebarLinks logo = {commentLogo} name= {'Comments'} isAdmin={true} ></SidebarLinks>
+        <SidebarLinks logo = {reportLogo} name= {'Reports'} isAdmin={true} ></SidebarLinks>
+        <SidebarLinks logo = {premiumLogo} name= {'Premium'} isAdmin={true} ></SidebarLinks>
         </div> 
         <button className='mt-auto mb-5  w-1/6 gap-2 flex justify-center items-center'  onClick={handleLogout}><img src={logoutLogo}/><span className='text-white text-md font-medium '>Logout</span></button>
     </div>

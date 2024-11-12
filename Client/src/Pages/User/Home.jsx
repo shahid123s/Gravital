@@ -5,10 +5,12 @@ import Suggestion from '../../Components/User/Suggestion'
 
 function Home() {
   return (
-    <div className='h-screen flex'>
+    <div className=' min-h-screen flex '>
       <Sidebar/>
+      <div className='flex justify-evenly w-full'>
       <Content/>
       <Suggestion/>
+      </div>
 
     </div>
   )

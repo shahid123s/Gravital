@@ -64,15 +64,23 @@ const sendotp = async (req, res) => {
 
 const otpVerification = async (req, res) => {
   try {
+    console.log('vanna')
+
     const { otp, email } = req.body;
     const currentOtp = await getOtp(email)
     if (!currentOtp) {
       return res.status(404).json({ message: 'OTP Expired' })
     }
     if (+otp === Number(currentOtp)) {
-      res.status(200).json({ message: "OTP Verified Successfully" })
+      return res.status(200).json({ message: "OTP Verified Successfully" })
     }
+    else{
+      return res.status(404).json({ message: "OTP is doesn't match" })
+    }
+    
+
   } catch (error) {
+    console.log(error)
     res.status(504).json({ message: error.message })
   }
 }

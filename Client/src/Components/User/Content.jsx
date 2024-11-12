@@ -32,9 +32,78 @@ function Content() {
   }
 
   return (
-    <div className='ml-64 flex-1 flex flex-col items-center'>
-      <button onClick={handleLogout}>Logout</button>
-      <button onClick={handlePost}> okay</button>
+    <div className='ml-64  flex flex-col h-full justify-center items-center w-full bg-inherit '>
+      <div className='bg-blue-800  px-10 py-5 '>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      <p>okay now whatd</p>
+      </div>
     </div>
   )
 }

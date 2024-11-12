@@ -33,7 +33,7 @@ function AdminTableComponent({ search }) {
       const response = await adminAxiosInstance.get('/users-list', {
         params: { page: currentPage, limit, search }
       });
-      console.lo
+      
       setUserDetails(response.data.userList);
       setTotalPages(response.data.totalPage);
       setIsLoading(false);

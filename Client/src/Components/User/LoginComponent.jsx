@@ -24,10 +24,12 @@ function LoginComponent({ isAdmin }) {
         if (isAdmin) {
             setTilte('ADMIN LOGIN')
         }
+        else{
+        }
     }, []);
 
     useEffect(() => {
-        if (isAuthenticate) {
+        if (isAuthenticate && !isAdmin) {
             navigate('/home');
 
         }
