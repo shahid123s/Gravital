@@ -220,6 +220,25 @@ const post = (req, res) => {
   console.log('post vann')
 }
 
+
+const suggesstingUser = async(req, res) => {
+    const suggestedUsers = await User.aggregate([
+      {
+        $project: {
+          username: 1, 
+          followersCount: { $size: "$followers" } 
+        }
+      },
+      {
+        $match: {
+          followersCount: { $gte : 0 } 
+        }
+      }
+    ]);
+    console.log()
+    res.json(suggesstingUser)
+}
+
 module.exports = {
   sendotp,
   otpVerification,
@@ -230,4 +249,5 @@ module.exports = {
   post,
   resetPassword,
   resetPasswordEmail,
+  suggesstingUser
 }

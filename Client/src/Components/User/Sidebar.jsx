@@ -46,7 +46,7 @@ function Sidebar() {
     <div   className='fixed flex flex-col left-0 bg-[#333333] w-56 h-screen items-center pt-10  '>
          <img src={Logo} alt=""  className='bg-transparent w-11/12 mb-7 hover:p-'  />
          <div className='bg-inherit flex-col flex gap-9 items-start'>
-            <SidebarLinks logo={HomeLogo} name={'Home'} textColor={'white'}/>
+            <SidebarLinks logo={HomeLogo} name={'Home'} />
             <SidebarLinks logo={TrendingLogo} name={'Trending'} />
             <SidebarLinks logo={SearchLogo} name={'Search'} />
             <SidebarLinks logo={LiveLogo} name={'Live'} />
@@ -54,8 +54,8 @@ function Sidebar() {
             <SidebarLinks logo={NotificationLogo} name={'Notification'} />
             <SidebarLinks logo={NotificationLogo} name={'Profile'}/>
          </div>
-         {isClicked &&  <div  ref={dropdownRef} className={`${
-  'opacity-100 translate-y-0' 
+         { <div  ref={dropdownRef} className={`${
+    isClicked ? 'opacity-100 translate-x-0' : 'opacity-0 invisible -translate-x-full'
   } mb-0 mt-auto p-4 rounded-xl bg-[#f3f3f3] top-1 relative flex flex-col justify-end gap-2 transition-all duration-300 ease-in-out`}>
           <SidebarLinks logo={ReportLogo} name={"Report Spam"} textColor={'dark'} textSize={'small'} />
           <SidebarLinks logo={FavouriteLogo} name={"Favourites"} textColor={'dark'} textSize={'small'} />

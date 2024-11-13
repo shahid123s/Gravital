@@ -11,6 +11,7 @@ import AdminUsersList from './Pages/Admin/AdminUsersList'
 import AdminPosts from './Pages/Admin/AdminPosts'
 import ForgetPassword from './Pages/User/ForgetPassword'
 import ForgetEmailPassword from './Pages/User/ForgetEmailPassword'
+import UserProfile from './Pages/User/UserProfile'
 
 const Register = lazy(() => import('./Pages/User/Register'));
 const PersonalInformtion = lazy(() => import('./Pages/User/PersonalInformtion'));
@@ -34,6 +35,7 @@ function App() {
               <Route path='reset-password' element={<ForgetPassword />} />
               <Route path='reset-password/email' element={<ForgetEmailPassword />} />
               <Route path='home' element={<Home />} />
+              <Route path='profile' element={<UserProfile/>} />
             </Route>
             <Route path='/admin'>
               <Route index element={<AdminLogin />} replace />

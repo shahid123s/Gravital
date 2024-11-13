@@ -17,4 +17,6 @@ userRoute.post('/refresh-token', userController.refreshAccessToken)
 
 userRoute.post('/post', authenticate, userController.post)
 
+userRoute.get('/suggeted-users', userController.suggesstingUser)
+
 module.exports = userRoute

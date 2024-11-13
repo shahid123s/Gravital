@@ -8,6 +8,7 @@ export default {
     extend: {
       fontFamily : {
         poppins: ['Poppins', 'sans-serif'],
+        numberFont: ['Port Lligat Slab', 'serif']
       },
       fontSize: {
         '24px': '24px',
